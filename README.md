@@ -8,6 +8,28 @@
 
 ---
 
+## 📸 Screenshots
+
+<p align="center">
+  <img src="assets/gameplay.png" alt="Gameplay" width="700">
+  <br>
+  <em>High-intensity gameplay with AI opponents</em>
+</p>
+
+<p align="center">
+  <img src="assets/mobile.png" alt="Mobile Controls" width="700">
+  <br>
+  <em>Responsive floating joystick for mobile devices</em>
+</p>
+
+<p align="center">
+  <img src="assets/boost.png" alt="Boost Effect" width="700">
+  <br>
+  <em>Dynamic boost effects and screen shake</em>
+</p>
+
+---
+
 ## ✨ Features
 
 *   📱 **Cross-Platform Support**: Seamless gameplay on both Mobile and Desktop.
