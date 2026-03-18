@@ -245,7 +245,7 @@ window.addEventListener('DOMContentLoaded', () => {
             const touch = e.changedTouches[i];
             
             // Double tap = Boost
-            if (isDoubleTap) {
+            if (isDoubleTap && player.segments.length > MIN_BOOST_LENGTH) {
                 isBoosting = true;
                 boostTouchId = touch.identifier;
             }
@@ -332,7 +332,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Keyboard boost & pause
     window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space') { isBoosting = true; inputMode = 'mouse'; updateInputUI('mouse'); }
+        if (e.code === 'Space' && player.segments.length > MIN_BOOST_LENGTH) { 
+            isBoosting = true; 
+            inputMode = 'mouse'; 
+            updateInputUI('mouse'); 
+        }
         if (e.code === 'Escape' && gameRunning) togglePause();
     });
     window.addEventListener('keyup', (e) => { if (e.code === 'Space') isBoosting = false; });
@@ -620,8 +624,14 @@ function gameLoop() {
 function update() {
     // Update player
     if (player.alive) {
+        // Force boost OFF if snake is too small
+        if (player.segments.length <= MIN_BOOST_LENGTH) {
+            isBoosting = false;
+            boostTouchId = null;
+        }
+
         player.targetAngle = mouseAngle;
-        player.boosting = isBoosting && player.segments.length > 10;
+        player.boosting = isBoosting && player.segments.length > MIN_BOOST_LENGTH;
         updateSnake(player);
         
         // Spawn speed lines if player is boosting

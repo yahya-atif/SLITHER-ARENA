@@ -14,6 +14,7 @@ const BODY_RADIUS = 10;
 const FOOD_RADIUS = 6;
 const GROW_PER_FOOD = 2;
 const BORDER_MARGIN = 80;
+const MIN_BOOST_LENGTH = 10;
 
 // ============ SKIN DEFINITIONS ============
 const SKINS = [
