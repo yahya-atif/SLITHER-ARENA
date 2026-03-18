@@ -39,6 +39,8 @@ let joystickActive = false;
 let joystickId = null;
 let joystickStartX = 0;
 let joystickStartY = 0;
+let lastTapTime = 0;
+let boostTouchId = null;
 const JOYSTICK_MAX_RADIUS = 35;
 
 // ============ UTILITIES ============
@@ -231,34 +233,36 @@ window.addEventListener('DOMContentLoaded', () => {
     });
     canvas.addEventListener('mouseup', () => isBoosting = false);
 
-    // ====== MOBILE TOUCH (Floating Joystick & Boost) ======
+    // ====== MOBILE TOUCH (Anywhere Floating Joystick & Double-Tap Boost) ======
     canvas.addEventListener('touchstart', (e) => {
         if (window.innerWidth > 768) return; // Only mobile
         e.preventDefault();
         
+        const now = Date.now();
+        const isDoubleTap = (now - lastTapTime < 300);
+        
         for (let i = 0; i < e.changedTouches.length; i++) {
             const touch = e.changedTouches[i];
             
-            // Left half = Joystick
-            if (touch.clientX < window.innerWidth / 2) {
-                if (joystickActive) continue; // Only one joystick at a time
-                
+            // Double tap = Boost
+            if (isDoubleTap) {
+                isBoosting = true;
+                boostTouchId = touch.identifier;
+            }
+
+            // If no joystick is active, this touch starts the joystick (anywhere)
+            if (!joystickActive) {
                 joystickActive = true;
                 joystickId = touch.identifier;
                 joystickStartX = touch.clientX;
                 joystickStartY = touch.clientY;
                 
-                // Position and show joystick base at touch point
                 const joystickContainer = document.getElementById('joystick-container');
                 if (joystickContainer) {
                     joystickContainer.style.left = (joystickStartX - 60) + 'px';
                     joystickContainer.style.top = (joystickStartY - 60) + 'px';
                     joystickContainer.style.display = 'block';
                 }
-            } 
-            // Right half = Boost
-            else {
-                isBoosting = true;
             }
         }
         touchActive = true;
@@ -280,7 +284,6 @@ window.addEventListener('DOMContentLoaded', () => {
                     mouseAngle = Math.atan2(dy, dx);
                 }
                 
-                // Move visual knob
                 const joystickKnob = document.getElementById('joystick-knob');
                 if (joystickKnob) {
                     let moveX = dx;
@@ -306,13 +309,16 @@ window.addEventListener('DOMContentLoaded', () => {
                 const joystickKnob = document.getElementById('joystick-knob');
                 if (joystickContainer) joystickContainer.style.display = 'none';
                 if (joystickKnob) joystickKnob.style.transform = 'translate(-50%, -50%)';
-            } else {
-                // If it wasn't the joystick touch, it might be the boost touch
-                isBoosting = false;
             }
+            
+            if (touch.identifier === boostTouchId) {
+                isBoosting = false;
+                boostTouchId = null;
+            }
+
+            lastTapTime = Date.now();
         }
         
-        // Safety check: if no fingers on screen, reset everything
         if (e.touches.length === 0) {
             isBoosting = false;
             joystickActive = false;
