@@ -341,6 +341,7 @@ body {
     backdrop-filter: blur(10px);
     z-index: 50;
     display: none;
+    pointer-events: none;
 }
 
 /* ============ GAME OVER SCREEN ============ */
