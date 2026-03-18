@@ -207,6 +207,10 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('resume-btn').addEventListener('click', resumeGame);
     document.getElementById('quit-btn').addEventListener('click', quitGame);
     document.getElementById('go-quit-btn').addEventListener('click', quitGame);
+    document.getElementById('mobile-pause-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        togglePause();
+    });
 
     // Mouse
     canvas.addEventListener('mousemove', (e) => {
