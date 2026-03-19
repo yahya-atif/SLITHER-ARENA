@@ -132,37 +132,8 @@ function render() {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
     }
-    
-    // Active Power-Up Indicator
-    if (player && player.powerUp) {
-        ctx.save();
-        const barW = 200;
-        const barH = 8;
-        const barX = (canvas.width - barW) / 2;
-        const barY = 40;
-        const pct = player.powerUp.timer / 600; // All timed power-ups are 10s (600 frames)
-        
-        // Label
-        ctx.textAlign = 'center';
-        ctx.font = 'bold 14px Outfit, sans-serif';
-        const label = player.powerUp.type === 'magnet' ? '🧲 مغناطيس' : player.powerUp.type === 'shield' ? '🛡️ درع' : '⭐ x2 نقاط';
-        ctx.fillStyle = 'rgba(255,255,255,0.9)';
-        ctx.fillText(label, canvas.width/2, barY - 5);
-        
-        // Background bar
-        ctx.fillStyle = 'rgba(0,0,0,0.5)';
-        ctx.beginPath();
-        ctx.roundRect(barX, barY, barW, barH, 4);
-        ctx.fill();
-        
-        // Progress bar
-        const colors = { magnet: '#ff00ff', shield: '#00ffff', x2: '#ffdd00' };
-        ctx.fillStyle = colors[player.powerUp.type] || '#fff';
-        ctx.beginPath();
-        ctx.roundRect(barX, barY, barW * pct, barH, 4);
-        ctx.fill();
-        ctx.restore();
-    }
+      // Active Power-Up UI (DOM-based)
+    updatePowerUpUI();
     
     // Achievement Popups (right side)
     if (typeof achievements !== 'undefined' && achievements.length > 0) {
@@ -629,4 +600,46 @@ function renderMinimap() {
     minimapCtx.strokeStyle = 'rgba(255,255,255,0.15)';
     minimapCtx.lineWidth = 1;
     minimapCtx.strokeRect(0, 0, mw, mh);
+}
+
+/**
+ * Updates the new DOM-based Power-Up timer
+ */
+function updatePowerUpUI() {
+    const container = document.getElementById('power-up-container');
+    if (!container) return;
+
+    if (player && player.powerUp && player.powerUp.timer > 0) {
+        const label = document.getElementById('power-up-label');
+        const progress = document.getElementById('power-up-progress');
+        
+        container.style.display = 'block';
+        
+        // Handle type labels
+        let typeLabel = '';
+        switch(player.powerUp.type) {
+            case 'magnet': typeLabel = '🧲 مغناطيس'; break;
+            case 'shield': typeLabel = '🛡️ درع'; break;
+            case 'x2': typeLabel = '⭐ x2 نقاط'; break;
+            case 'teleport': typeLabel = '🌀 انتقال آني'; break;
+            default: typeLabel = '✨ قوة خاصة';
+        }
+        label.textContent = typeLabel;
+        
+        // Timer percentage (assuming 10s / 600 frames base)
+        const maxTime = 600; 
+        const pct = Math.max(0, Math.min(100, (player.powerUp.timer / maxTime) * 100));
+        progress.style.width = pct + '%';
+        
+        // Color coding
+        const colors = { 
+            magnet: 'linear-gradient(90deg, #ff00ff, #aa00ff)', 
+            shield: 'linear-gradient(90deg, #00ffff, #0099ff)', 
+            x2: 'linear-gradient(90deg, #ffdd00, #ff8800)',
+            teleport: 'linear-gradient(90deg, #00ff88, #00ccff)'
+        };
+        progress.style.background = colors[player.powerUp.type] || '#fff';
+    } else {
+        container.style.display = 'none';
+    }
 }
