@@ -328,7 +328,8 @@ function drawSnake(snake) {
 
     // LOD: Determine detail level based on zoom and whether this is the player
     const isPlayer = (snake === player);
-    const drawDetails = isPlayer || globalZoom > 0.55;
+    const detailZoom = (typeof DRAW_DETAIL_ZOOM !== 'undefined') ? DRAW_DETAIL_ZOOM : 0.5;
+    const drawDetails = isPlayer || globalZoom > detailZoom;
 
     // --- 1. CONTINUOUS BODY TUBE (Connectivity Layer) ---
     ctx.lineCap = 'round';

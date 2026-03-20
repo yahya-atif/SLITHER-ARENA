@@ -17,7 +17,10 @@
 
     <div class="input-container">
         <input type="text" id="player-name" placeholder="أدخل اسمك..." maxlength="15" autocomplete="off" dir="auto">
-        <button id="play-btn">ابدأ اللعب 🎮</button>
+        <div class="main-actions">
+            <button id="play-btn">ابدأ اللعب 🎮</button>
+            <button id="start-settings-btn" class="settings-trigger-btn">⚙️</button>
+        </div>
     </div>
 
     <div class="skin-label">اختر سكنك</div>
@@ -44,7 +47,9 @@
         </div>
 
         <div id="fps-counter" class="fps-badge">FPS: 60</div>
-        <button id="mobile-pause-btn">⏸️</button>
+        <div class="hud-buttons">
+            <button id="mobile-pause-btn">⏸️</button>
+        </div>
     </div>
 
     <!-- Power-Up Timer -->
@@ -93,9 +98,89 @@
         <div class="pause-score-info">نقاطك: <span id="pause-score">0</span></div>
         <div class="pause-buttons">
             <button id="resume-btn">استكمال اللعب ▶️</button>
+            <button id="pause-settings-btn" class="secondary-btn settings-trigger-btn">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                الإعدادات
+            </button>
             <button id="quit-btn">خروج 🚪</button>
         </div>
         <div class="pause-hint">اضغط ESC للاستكمال</div>
+    </div>
+</div>
+
+<!-- ======== SETTINGS MODAL ======== -->
+<div id="settings-modal" class="modal-ui">
+    <div class="modal-overlay"></div>
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3>⚙️ الإعدادات</h3>
+            <button id="settings-close-btn" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <!-- Audio Toggles -->
+            <div class="setting-item">
+                <div class="setting-info">
+                    <span class="setting-icon">🔊</span>
+                    <span class="setting-label">المؤثرات الصوتية</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="set-sound" checked>
+                    <span class="slider-round"></span>
+                </label>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-info">
+                    <span class="setting-icon">🎵</span>
+                    <span class="setting-label">الموسيقى الخلفية</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="set-music" checked>
+                    <span class="slider-round"></span>
+                </label>
+            </div>
+
+            <hr class="setting-divider">
+
+            <!-- Display Toggles -->
+            <div class="setting-item">
+                <div class="setting-info">
+                    <span class="setting-icon">📊</span>
+                    <span class="setting-label">عرض الـ FPS</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="set-fps" checked>
+                    <span class="slider-round"></span>
+                </label>
+            </div>
+
+            <div class="setting-item vertical">
+                <div class="setting-info">
+                    <span class="setting-icon">✨</span>
+                    <span class="setting-label">جودة الرسوميات</span>
+                </div>
+                <div class="quality-selector">
+                    <button class="quality-btn" data-value="low">منخفضة</button>
+                    <button class="quality-btn active" data-value="medium">متوسطة</button>
+                    <button class="quality-btn" data-value="high">عالية</button>
+                </div>
+            </div>
+
+            <div class="setting-item vertical mobile-only-setting">
+                <div class="setting-info">
+                    <span class="setting-icon">🕹️</span>
+                    <span class="setting-label">حساسية الجويستيك</span>
+                </div>
+                <input type="range" id="set-sensitivity" min="0.5" max="2.0" step="0.1" value="1.0" class="modern-range">
+                <div class="range-labels">
+                    <span>ثبات</span>
+                    <span>سرعة خفة</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="settings-save-btn" class="primary-btn">حفظ الإغلاق ✅</button>
+        </div>
     </div>
 </div>
 
@@ -104,6 +189,7 @@
 <!-- ======== JAVASCRIPT MODULES ======== -->
 <!-- ترتيب التحميل مهم: config أولاً، ثم المكونات، ثم اللعبة -->
 <script src="js/config.js"></script>
+<script src="js/settings.js"></script>
 <script src="js/food.js"></script>
 <script src="js/snake.js"></script>
 <script src="js/ai.js"></script>

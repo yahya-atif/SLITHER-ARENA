@@ -40,7 +40,11 @@ function updateSnake(snake) {
     let angleDiff = snake.targetAngle - snake.angle;
     while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
     while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
-    const turnRate = snake.turnRate || (snake.isAI ? 0.08 : 0.12);
+    let turnRate = snake.turnRate || (snake.isAI ? 0.08 : 0.12);
+    // Apply sensitivity for player
+    if (!snake.isAI && typeof gameSettings !== 'undefined') {
+        turnRate *= (gameSettings.sensitivity || 1.0);
+    }
     snake.angle += angleDiff * turnRate * dt;
 
     // Score-based speed balancing (larger = slightly slower)
