@@ -117,11 +117,12 @@ function applyAllSettings() {
         fpsCounter.style.display = gameSettings.showFPS ? 'block' : 'none';
     }
 
-    // 2. Audio (Placeholders for now, but state is tracked)
-    if (typeof window.isSoundEnabled !== 'undefined') window.isSoundEnabled = gameSettings.sound;
-    if (typeof window.isMusicEnabled !== 'undefined') window.isMusicEnabled = gameSettings.music;
+    // 2. Audio
+    if (typeof AudioManager !== 'undefined') {
+        AudioManager.updateFromSettings();
+    }
 
-    // 3. Graphics Quality (Affects renderer constants)
+    // 3. Graphics Quality
     applyGraphicsQuality();
 }
 

@@ -116,6 +116,9 @@ function checkFoodCollision(snake) {
             });
 
             foods.splice(i, 1);
+            if (snake === player) {
+                AudioManager.playSound('eat');
+            }
         }
     }
 }
@@ -180,6 +183,11 @@ function checkSnakeCollisions() {
 
 function killSnake(snake) {
     snake.alive = false;
+    
+    if (snake === player) {
+        AudioManager.playSound('death');
+        AudioManager.stopMusic();
+    }
 
     // Convert body to food - CAPPED at 25 to prevent lag spikes
     const maxDeathFood = 25;

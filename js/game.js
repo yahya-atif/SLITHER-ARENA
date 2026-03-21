@@ -199,16 +199,36 @@ window.addEventListener('DOMContentLoaded', () => {
     buildSkinSelector();
     addBackgroundSnakes();
 
-    document.getElementById('play-btn').addEventListener('click', startGame);
-    document.getElementById('player-name').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') startGame();
+    document.getElementById('play-btn').addEventListener('click', () => {
+        AudioManager.init(); // Init on first interaction
+        AudioManager.playSound('click');
+        startGame();
     });
-    document.getElementById('restart-btn').addEventListener('click', restartGame);
-    document.getElementById('resume-btn').addEventListener('click', resumeGame);
-    document.getElementById('quit-btn').addEventListener('click', quitGame);
-    document.getElementById('go-quit-btn').addEventListener('click', quitGame);
+    document.getElementById('player-name').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            AudioManager.init();
+            startGame();
+        }
+    });
+    document.getElementById('restart-btn').addEventListener('click', () => {
+        AudioManager.playSound('click');
+        restartGame();
+    });
+    document.getElementById('resume-btn').addEventListener('click', () => {
+        AudioManager.playSound('click');
+        resumeGame();
+    });
+    document.getElementById('quit-btn').addEventListener('click', () => {
+        AudioManager.playSound('click');
+        quitGame();
+    });
+    document.getElementById('go-quit-btn').addEventListener('click', () => {
+        AudioManager.playSound('click');
+        quitGame();
+    });
     document.getElementById('mobile-pause-btn').addEventListener('click', (e) => {
         e.stopPropagation();
+        AudioManager.playSound('click');
         togglePause();
     });
 
@@ -229,6 +249,7 @@ window.addEventListener('DOMContentLoaded', () => {
     canvas.addEventListener('mousedown', (e) => {
         if (e.button === 0) {
             isBoosting = true;
+            AudioManager.playSound('boost');
             if (inputMode === 'gamepad') {
                 inputMode = 'mouse';
                 updateInputUI('mouse');
@@ -559,6 +580,7 @@ function startGame() {
     particles = [];
     gameRunning = true;
     animFrame = 0;
+    AudioManager.playMusic(); // Start Background Music
     gameLoop();
 }
 
@@ -577,25 +599,37 @@ function togglePause() {
 }
 
 function pauseGame() {
-    if (!gameRunning || !player.alive) return;
-    gamePaused = true;
-    document.getElementById('pause-score').textContent = player.score;
-    document.getElementById('pause-menu').classList.add('active');
+    if (typeof gameRunning !== 'undefined' && gameRunning && (typeof gamePaused === 'undefined' || !gamePaused)) {
+        gamePaused = true;
+        document.getElementById('pause-menu').classList.add('active');
+        document.getElementById('pause-score').textContent = player ? player.score : 0;
+        if (typeof AudioManager !== 'undefined') {
+            AudioManager.pauseMusic();
+            AudioManager.playSound('pause');
+        }
+    }
 }
 
 function resumeGame() {
-    gamePaused = false;
-    document.getElementById('pause-menu').classList.remove('active');
-    gameLoop(); // restart the loop
+    if (typeof gameRunning !== 'undefined' && gameRunning && (typeof gamePaused !== 'undefined' && gamePaused)) {
+        gamePaused = false;
+        document.getElementById('pause-menu').classList.remove('active');
+        if (typeof AudioManager !== 'undefined') {
+            AudioManager.resumeMusic();
+            AudioManager.playSound('resume');
+        }
+        requestAnimationFrame(gameLoop);
+    }
 }
 
 function quitGame() {
-    gamePaused = false;
     gameRunning = false;
+    gamePaused = false;
+    AudioManager.stopMusic();
     document.getElementById('pause-menu').classList.remove('active');
     document.getElementById('game-over').classList.remove('active');
-    canvas.style.display = 'none';
     document.getElementById('hud').style.display = 'none';
+    canvas.style.display = 'none';
     document.getElementById('minimap').style.display = 'none';
     document.getElementById('start-screen').style.display = '';
     
