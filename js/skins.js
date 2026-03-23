@@ -13,6 +13,16 @@ const SKINS = [
         unlockScore: 0
     },
     {
+        id: 'ice',
+        name: 'Arctic Frost',
+        colors: ['#88ddff', '#ffffff', '#88ddff', '#aaeeff'],
+        eyeColor: '#003',
+        headGlow: 'rgba(136,221,255,0.7)',
+        pattern: 'stripe',
+        effect: 'ice',
+        unlockScore: 500
+    },
+    {
         id: 'neon',
         name: 'Neon Viper',
         colors: ['#00ff88', '#00cc66', '#00ff88', '#00ffcc'],
@@ -22,22 +32,44 @@ const SKINS = [
         unlockScore: 1000
     },
     {
-        id: 'fire',
-        name: 'Fire Storm',
-        colors: ['#ff4400', '#ff8800', '#ff4400', '#ffcc00'],
+        id: 'electric',
+        name: 'High Voltage',
+        colors: ['#ffff00', '#0088ff', '#ffff00', '#00ccff'],
         eyeColor: '#fff',
-        headGlow: 'rgba(255,68,0,0.5)',
+        headGlow: 'rgba(255,255,0,0.8)',
         pattern: 'stripe',
-        unlockScore: 5000
+        effect: 'electric',
+        unlockScore: 1500
     },
     {
-        id: 'ice',
-        name: 'Arctic Frost',
-        colors: ['#88ddff', '#ffffff', '#88ddff', '#aaeeff'],
-        eyeColor: '#003',
-        headGlow: 'rgba(136,221,255,0.5)',
+        id: 'gold',
+        name: 'Golden Midas',
+        colors: ['#ffdd00', '#eeaa00', '#ffcc00', '#ddaa00'],
+        eyeColor: '#000',
+        headGlow: 'rgba(255,215,0,0.8)',
+        pattern: 'solid',
+        effect: 'gold',
+        unlockScore: 2000
+    },
+    {
+        id: 'toxic',
+        name: 'Venomous',
+        colors: ['#33ff00', '#113300', '#33ff00', '#228800'],
+        eyeColor: '#f00',
+        headGlow: 'rgba(51,255,0,0.9)',
         pattern: 'stripe',
-        unlockScore: 8000
+        effect: 'toxic',
+        unlockScore: 3000
+    },
+    {
+        id: 'fire',
+        name: 'Fire Storm',
+        colors: ['#ff4400', '#ff8800', '#ff2200', '#ffcc00'],
+        eyeColor: '#fff',
+        headGlow: 'rgba(255,68,0,0.8)',
+        pattern: 'stripe',
+        effect: 'fire',
+        unlockScore: 5000
     },
     {
         id: 'galaxy',
@@ -413,12 +445,34 @@ const SkinsManager = {
 
             // Head Glow
             ctx.beginPath();
-            ctx.arc(h.x, h.y, radius * 4, 0, Math.PI * 2);
-            const headGlow = ctx.createRadialGradient(h.x, h.y, 0, h.x, h.y, radius * 4);
+            
+            let globalAlphaBase = 0.3;
+            let glowRadiusMult = 1;
+
+            if (skin.effect === 'toxic') {
+                globalAlphaBase = 0.45;
+                glowRadiusMult = 1.3;
+            } else if (skin.effect === 'fire') {
+                globalAlphaBase = 0.35 + Math.sin(this.previewAnimFrame * 0.2) * 0.1;
+                glowRadiusMult = 1.2 + Math.random() * 0.2;
+            } else if (skin.effect === 'ice') {
+                globalAlphaBase = 0.4;
+                glowRadiusMult = 1.4;
+            } else if (skin.effect === 'electric') {
+                globalAlphaBase = (Math.random() > 0.5) ? 0.6 : 0.1;
+                glowRadiusMult = 1.1 + Math.random() * 0.3;
+            } else if (skin.effect === 'gold') {
+                globalAlphaBase = 0.4 + Math.sin(this.previewAnimFrame * 0.1) * 0.2;
+                glowRadiusMult = 1.2;
+            }
+
+            const currentGlowRadius = radius * 4 * glowRadiusMult;
+            ctx.arc(h.x, h.y, currentGlowRadius, 0, Math.PI * 2);
+            const headGlow = ctx.createRadialGradient(h.x, h.y, 0, h.x, h.y, currentGlowRadius);
             headGlow.addColorStop(0, skin.headGlow || skin.colors[0]);
             headGlow.addColorStop(1, 'transparent');
             ctx.fillStyle = headGlow;
-            ctx.globalAlpha = 0.3;
+            ctx.globalAlpha = globalAlphaBase;
             ctx.fill();
             ctx.globalAlpha = 1.0;
 

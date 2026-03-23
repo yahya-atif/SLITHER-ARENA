@@ -386,11 +386,32 @@ function drawSnake(snake) {
     // --- 3. BODY GLOW TRAIL ---
     if (!lowGraphics) {
         ctx.save();
-        ctx.globalAlpha = 0.1;
+        
+        let globalAlphaBase = 0.1;
+        let glowRadiusMult = 1;
+        
+        if (skin.effect === 'toxic') {
+            globalAlphaBase = 0.25;
+            glowRadiusMult = 1.3;
+        } else if (skin.effect === 'fire') {
+            globalAlphaBase = 0.15 + Math.sin(animFrame * 0.2) * 0.05;
+            glowRadiusMult = 1.2 + Math.random() * 0.2;
+        } else if (skin.effect === 'ice') {
+            globalAlphaBase = 0.15;
+            glowRadiusMult = 1.4;
+        } else if (skin.effect === 'electric') {
+            globalAlphaBase = (Math.random() > 0.5) ? 0.3 : 0.05;
+            glowRadiusMult = 1.1 + Math.random() * 0.3;
+        } else if (skin.effect === 'gold') {
+            globalAlphaBase = 0.2 + Math.sin(animFrame * 0.1) * 0.1;
+            glowRadiusMult = 1.2;
+        }
+
+        ctx.globalAlpha = globalAlphaBase;
         const glowStep = segments.length > 300 ? 12 : 6;
         for (let i = 0; i < segments.length; i += glowStep) {
             const seg = segments[i];
-            const r = (BODY_RADIUS + 6) * (1 - (i / segments.length) * 0.3);
+            const r = (BODY_RADIUS + 6) * glowRadiusMult * (1 - (i / segments.length) * 0.3);
             ctx.beginPath();
             ctx.arc(seg.x, seg.y, r, 0, Math.PI * 2);
             ctx.fillStyle = skin.headGlow;
